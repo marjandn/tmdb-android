@@ -1,2 +1,2 @@
 # tmdb-android
-Android application (Just Kotlin)
+Android application (Just Kotlin) TMDB APIs
