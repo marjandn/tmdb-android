@@ -9,8 +9,7 @@ import dn.marjan.tmdb.data.datasources.remote.client.RestClient
 import dn.marjan.tmdb.data.datasources.remote.client.RetrofitBase
 import dn.marjan.tmdb.data.datasources.remote.client.TMDBServices
 import dn.marjan.tmdb.data.datasources.remote.parser.JsonParser
-import dn.marjan.tmdb.data.datasources.remote.services.MovieRemoteDataSource
-import dn.marjan.tmdb.data.datasources.remote.services.MovieRemoteDataSourceImpl
+import dn.marjan.tmdb.data.datasources.remote.services.*
 import javax.inject.Singleton
 
 @Module
@@ -19,6 +18,26 @@ class DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideMovieDataSource(restClient: RestClient , jsonParser: JsonParser): MovieRemoteDataSource =
+    fun provideMovieDataSource(
+        restClient: RestClient,
+        jsonParser: JsonParser
+    ): MovieRemoteDataSource =
         MovieRemoteDataSourceImpl(restClient = restClient, jsonParser = jsonParser)
+
+
+    @Singleton
+    @Provides
+    fun provideTvshowDataSource(
+        restClient: RestClient,
+        jsonParser: JsonParser
+    ): TvshowRemoteDataSource =
+        TvshowRemoteDataSourceImpl(restClient, jsonParser)
+
+    @Singleton
+    @Provides
+    fun providePeopleDataSource(
+        restClient: RestClient,
+        jsonParser: JsonParser
+    ): PeopleRemoteDataSource =
+        PeopleRemoteDataSourceImpl(restClient, jsonParser)
 }

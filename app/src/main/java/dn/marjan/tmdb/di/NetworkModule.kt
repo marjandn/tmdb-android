@@ -12,6 +12,8 @@ import dn.marjan.tmdb.data.datasources.remote.client.TMDBServices
 import dn.marjan.tmdb.data.datasources.remote.parser.JsonParser
 import dn.marjan.tmdb.data.datasources.remote.parser.MoshiParser
 import dn.marjan.tmdb.data.model.MovieResponse
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -24,15 +26,15 @@ class NetworkModule {
         .add(KotlinJsonAdapterFactory())
         .build()
 
-
     @Singleton
     @Provides
     fun provideBaseRetrofit(moshi: Moshi): RestClient = RetrofitBase(moshi = moshi)
-
-
 
     @Singleton
     @Provides
     fun provideJsonParser(moshi: Moshi): JsonParser = MoshiParser(moshi = moshi)
 
+    @Singleton
+    @Provides
+    fun provideCoroutinesDispatcher(): CoroutineDispatcher = Dispatchers.IO
 }

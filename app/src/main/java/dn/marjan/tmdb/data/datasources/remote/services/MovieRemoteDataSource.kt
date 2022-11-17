@@ -35,7 +35,7 @@ class MovieRemoteDataSourceImpl @Inject constructor(
             return jsonParser.fromJson<MovieResponse>(res.string(), MovieResponse::class.java)
 
         } catch (error: ServerException) {
-            throw ServerException(error.message ?: "Server error")
+                  throw ServerException(error.errorMessage)
         }
     }
 
@@ -47,7 +47,7 @@ class MovieRemoteDataSourceImpl @Inject constructor(
             return jsonParser.fromJson<MovieResponse>(res.string(), MovieResponse::class.java)
 
         } catch (error: ServerException) {
-            throw ServerException(error.message ?: "Server error")
+                  throw ServerException(error.errorMessage)
         }
     }
 
@@ -59,7 +59,7 @@ class MovieRemoteDataSourceImpl @Inject constructor(
             return jsonParser.fromJson<MovieResponse>(res.string(), MovieResponse::class.java)
 
         } catch (error: ServerException) {
-            throw ServerException(error.message ?: "Server error")
+                  throw ServerException(error.errorMessage)
         }
     }
 
@@ -71,7 +71,7 @@ class MovieRemoteDataSourceImpl @Inject constructor(
             return jsonParser.fromJson<MovieResponse>(res.string(), MovieResponse::class.java)
 
         } catch (error: ServerException) {
-            throw ServerException(error.message ?: "Server error")
+                  throw ServerException(error.errorMessage)
         }
     }
 
