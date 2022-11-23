@@ -24,19 +24,18 @@ class MovieResponse(
             it.originalTitle,
             it.overview,
             it.popularity,
-            it.posterPath,
+            it.posterPath ?: "",
             it.releaseDate,
             it.title,
             it.voteAverage,
             it.voteCount,
-            totalPages
+            totalPages,
+            page
         )
     }
     class Result(
         @Json(name = "adult")
         val adult: Boolean,
-        @Json(name = "backdrop_path")
-        val backdropPath: String,
         @Json(name = "genre_ids")
         val genreIds: List<Int>,
         @Json(name = "id")
@@ -50,7 +49,7 @@ class MovieResponse(
         @Json(name = "popularity")
         val popularity: Double,
         @Json(name = "poster_path")
-        val posterPath: String,
+        val posterPath: String?,
         @Json(name = "release_date")
         val releaseDate: String,
         @Json(name = "title")

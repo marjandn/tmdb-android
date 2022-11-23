@@ -11,6 +11,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.TMDB"
@@ -29,6 +30,9 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity android:name=".presentation.movies.AllMoviesPage"/>
+        <activity android:name=".presentation.tvshows.AllTvshowPage"/>
+        <activity android:name=".presentation.people.AllPeoplePage"/>
     </application>
 
 </manifest>

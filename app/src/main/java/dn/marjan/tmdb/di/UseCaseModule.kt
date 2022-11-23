@@ -9,7 +9,6 @@ import dn.marjan.tmdb.domain.repository.PeopleRepository
 import dn.marjan.tmdb.domain.repository.TvshowRepository
 import dn.marjan.tmdb.domain.usecase.movie.GetFeaturedMovies
 import dn.marjan.tmdb.domain.usecase.movie.GetPopularMovies
-import dn.marjan.tmdb.domain.usecase.movie.GetUpComingMovies
 import dn.marjan.tmdb.domain.usecase.movie.SearchMovie
 import dn.marjan.tmdb.domain.usecase.people.GetPopularPeople
 import dn.marjan.tmdb.domain.usecase.people.SearchPeople
@@ -29,10 +28,6 @@ class UseCaseModule {
     @Provides
     fun provideGetFeaturedMovies(movieRepository: MovieRepository): GetFeaturedMovies =
         GetFeaturedMovies(movieRepository)
-
-    @Provides
-    fun provideUpcomingMovies(movieRepository: MovieRepository): GetUpComingMovies =
-        GetUpComingMovies(movieRepository)
 
     @Provides
     fun provideSearchMovies(movieRepository: MovieRepository): SearchMovie =

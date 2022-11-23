@@ -1,63 +1,75 @@
 package dn.marjan.tmdb.data.repositories
 
+import android.util.Log
+import androidx.paging.*
 import dn.marjan.tmdb.app.base.datastate.DataState
 import dn.marjan.tmdb.app.base.error.ServerException
+import dn.marjan.tmdb.data.paging.movies.PopularMoviePagingSource
 import dn.marjan.tmdb.data.datasources.remote.parameters.PagingParam
 import dn.marjan.tmdb.data.datasources.remote.parameters.SearchParam
 import dn.marjan.tmdb.data.datasources.remote.services.MovieRemoteDataSource
 import dn.marjan.tmdb.data.model.MovieResponse
+import dn.marjan.tmdb.data.paging.movies.FeaturedMoviePagingSource
+import dn.marjan.tmdb.data.paging.movies.SearchMoviePagingSource
 import dn.marjan.tmdb.domain.entity.Movie
 import dn.marjan.tmdb.domain.repository.MovieRepository
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import javax.inject.Inject
 
-class MovieRepositoryImpl @Inject constructor(private val movieRemoteDataSource: MovieRemoteDataSource) :
-    MovieRepository {
+class MovieRepositoryImpl @Inject constructor(
+    private val movieRemoteDataSource: MovieRemoteDataSource,
+    private val popularMoviePagingSource: PopularMoviePagingSource,
+    private val featuredMoviePagingSource: FeaturedMoviePagingSource,
+    private val pageConfig: PagingConfig
+) : MovieRepository {
 
-    override suspend fun getPopularMovies(pageParam: PagingParam): DataState<List<Movie>> {
+    override fun getPopularMovies(): Flow<PagingData<Movie>> = Pager(pageConfig) {
+        popularMoviePagingSource
+    }.flow
 
+    override suspend fun getFirstTenPopularMovies(): DataState<List<Movie>> {
         return try {
-            val response: MovieResponse = movieRemoteDataSource.getPopularMovies(pageParam)
+            val response: MovieResponse = movieRemoteDataSource.getPopularMovies(PagingParam(1))
 
-            DataState.DataSuccessState(response.toEntity())
+            DataState.DataSuccessState(response.toEntity().take(10))
         } catch (error: ServerException) {
             DataState.DataFailedState(error.errorMessage)
         }
-
     }
 
-    override suspend fun getUpComingMovies(pageParam: PagingParam): DataState<List<Movie>> {
-
+    override suspend fun getFirstTenUpcomingMovies(): DataState<List<Movie>> {
         return try {
-            val response: MovieResponse = movieRemoteDataSource.getUpComingMovies(pageParam)
+            val response: MovieResponse = movieRemoteDataSource.getUpComingMovies(PagingParam(1))
 
-            DataState.DataSuccessState(response.toEntity())
+            DataState.DataSuccessState(response.toEntity().take(10))
         } catch (error: ServerException) {
             DataState.DataFailedState(error.errorMessage)
         }
-
     }
 
-    override suspend fun getFeatureMoves(pageParam: PagingParam): DataState<List<Movie>> {
-
+    override suspend fun getFirstTenFeaturedMovies(): DataState<List<Movie>> {
         return try {
-            val response: MovieResponse = movieRemoteDataSource.getFeatureMoves(pageParam)
+            val response: MovieResponse = movieRemoteDataSource.getFeatureMoves(PagingParam(1))
 
-            DataState.DataSuccessState(response.toEntity())
+            DataState.DataSuccessState(response.toEntity().take(10))
         } catch (error: ServerException) {
             DataState.DataFailedState(error.errorMessage)
         }
-
     }
 
-    override suspend fun searchMovie(searchParam: SearchParam): DataState<List<Movie>> {
 
-        return try {
-            val response: MovieResponse = movieRemoteDataSource.searchMovie(searchParam)
+    override fun getFeatureMoves(): Flow<PagingData<Movie>> = Pager(pageConfig) {
+        featuredMoviePagingSource
+    }.flow
 
-            DataState.DataSuccessState(response.toEntity())
-        } catch (error: ServerException) {
-            DataState.DataFailedState(error.errorMessage)
+    override fun searchMovie(query: String): Flow<PagingData<Movie>> {
+        return Pager(pageConfig) {
+            SearchMoviePagingSource(movieRemoteDataSource, query)
+        }.flow.catch {
+            println("sth went wrong")
         }
-
     }
 }

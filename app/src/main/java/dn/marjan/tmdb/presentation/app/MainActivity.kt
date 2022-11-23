@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.style.TtsSpan.CardinalBuilder
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -57,27 +58,24 @@ import dn.marjan.tmdb.presentation.dashboard.DashboardPage
 import dn.marjan.tmdb.presentation.genres.GenresPage
 import dn.marjan.tmdb.presentation.search.SearchPage
 import dn.marjan.tmdb.ui.theme.TMDBTheme
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+
+// TODO: Implement UI of Genres page and Component
+// TODO: Implement associated ViewModel completely
+// TODO: Implement Genres page functionality completely
 
 @AndroidEntryPoint
 class MainActivity() : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         setContent {
             TMDBTheme {
                 DashboardScreen()
             }
         }
-
     }
-
 }
 
 

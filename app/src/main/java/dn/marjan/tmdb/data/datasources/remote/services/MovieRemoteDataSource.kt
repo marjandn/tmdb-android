@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 interface MovieRemoteDataSource {
 
-    suspend fun getPopularMovies(pageParam: PagingParam ): MovieResponse
+    suspend fun getPopularMovies(pageParam: PagingParam):  MovieResponse
     suspend fun getUpComingMovies(pageParam: PagingParam): MovieResponse
     suspend fun getFeatureMoves(pageParam: PagingParam): MovieResponse
 
@@ -22,20 +22,20 @@ interface MovieRemoteDataSource {
 class MovieRemoteDataSourceImpl @Inject constructor(
     private val restClient: RestClient,
     private val jsonParser: JsonParser
-) :
-    MovieRemoteDataSource {
+) : MovieRemoteDataSource {
 
     // todo: Replace ResponseBody(from Retrofit lib) class with a wrapper class
 
-    override suspend fun getPopularMovies(pageParam: PagingParam): MovieResponse {
+
+   override suspend fun getPopularMovies(pageParam: PagingParam): MovieResponse {
+
         try {
-            val res: ResponseBody =
-                restClient.getRequest(url = "movie/popular", data = pageParam.toJson())
+            val res: ResponseBody =  restClient.getRequest(url = "movie/popular", data = pageParam.toJson())
 
             return jsonParser.fromJson<MovieResponse>(res.string(), MovieResponse::class.java)
 
         } catch (error: ServerException) {
-                  throw ServerException(error.errorMessage)
+            throw ServerException(error.errorMessage)
         }
     }
 
@@ -65,8 +65,7 @@ class MovieRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun searchMovie(searchParam: SearchParam): MovieResponse {
         try {
-            val res: ResponseBody =
-                restClient.getRequest(url = "search/movie", data = searchParam.toJson())
+            val res: ResponseBody =  restClient.getRequest(url = "search/movie", data = searchParam.toJson())
 
             return jsonParser.fromJson<MovieResponse>(res.string(), MovieResponse::class.java)
 

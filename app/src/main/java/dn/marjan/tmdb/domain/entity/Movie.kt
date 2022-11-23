@@ -14,6 +14,7 @@ data class Movie(
     val voteAverage: Double,
     val voteCount: Int,
     val totalPage: Int,
+    val currentPage: Int
 ) {
     val posterPath = _posterPath
         get() = "${Constant.IMAGE_ADDRESS}$field"

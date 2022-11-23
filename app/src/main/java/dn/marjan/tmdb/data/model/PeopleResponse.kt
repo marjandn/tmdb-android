@@ -20,16 +20,18 @@ class PeopleResponse(
         People(
             it.id,
             it.name,
-            it.profile_path
+            it.profile_path,
+            it.popularity,
+            it.known_for_department ?:""
         )
     }
     class Result(
         val adult: Boolean,
         val id: Int,
-        val known_for_department: String,
+        val known_for_department: String?,
         val name: String,
         val popularity: Double,
-        val profile_path: String,
+        val profile_path: String?,
     )
 }
 
