@@ -1,8 +1,16 @@
-# tmdb-android
-Android application (Just Kotlin) TMDB APIs
+## TMDB application uses:
+- Clean Architecture
+- [Jetpack Compose](developer.android.com/jetpack/compose)
+- [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview)
+- [Hilt](https://dagger.dev/hilt/)
+- [Moshi](https://github.com/square/moshi)
+- [Pager](https://github.com/google/accompanist/tree/main/pager)
+- Flow, Coroutines
+- Lifecycle aware components
+- [Coil](https://coil-kt.github.io/coil/compose/)
+
 
 ## Application pages
-
 <div align:left;display:inline;>
 <img height="360" src="https://user-images.githubusercontent.com/25709266/204048259-d3be726c-5238-434e-b912-27cb5861d300.PNG"/>
 
