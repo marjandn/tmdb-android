@@ -2,9 +2,13 @@ package dn.marjan.tmdb.data.datasources.remote.services
 
 import dn.marjan.tmdb.app.base.error.ServerException
 import dn.marjan.tmdb.data.datasources.remote.client.RestClient
+import dn.marjan.tmdb.data.datasources.remote.parameters.MovieDetailsParam
 import dn.marjan.tmdb.data.datasources.remote.parameters.PagingParam
 import dn.marjan.tmdb.data.datasources.remote.parameters.SearchParam
 import dn.marjan.tmdb.data.datasources.remote.parser.JsonParser
+import dn.marjan.tmdb.data.model.MovieCreditsResponse
+import dn.marjan.tmdb.data.model.MovieDetailsResponse
+import dn.marjan.tmdb.data.model.MoviePicturesResponse
 import dn.marjan.tmdb.data.model.MovieResponse
 import okhttp3.ResponseBody
 import javax.inject.Inject
@@ -17,6 +21,10 @@ interface MovieRemoteDataSource {
     suspend fun getFeatureMoves(pageParam: PagingParam): MovieResponse
 
     suspend fun searchMovie(searchParam: SearchParam): MovieResponse
+
+    suspend fun getMovieDetails(movieDetailsParam: MovieDetailsParam): MovieDetailsResponse
+    suspend fun getMoviePictures(movieDetailsParam: MovieDetailsParam): MoviePicturesResponse
+    suspend fun getMovieCredits(movieDetailsParam: MovieDetailsParam): MovieCreditsResponse
 }
 
 class MovieRemoteDataSourceImpl @Inject constructor(
@@ -71,6 +79,39 @@ class MovieRemoteDataSourceImpl @Inject constructor(
 
         } catch (error: ServerException) {
                   throw ServerException(error.errorMessage)
+        }
+    }
+
+    override suspend fun getMovieDetails(movieDetailsParam: MovieDetailsParam): MovieDetailsResponse {
+        try {
+            val res: ResponseBody =  restClient.getRequest(url = "movie/${movieDetailsParam.movieId}")
+
+            return jsonParser.fromJson<MovieDetailsResponse>(res.string(), MovieDetailsResponse::class.java)
+
+        } catch (error: ServerException) {
+            throw ServerException(error.errorMessage)
+        }
+    }
+
+    override suspend fun getMoviePictures(movieDetailsParam: MovieDetailsParam): MoviePicturesResponse {
+        try {
+            val res: ResponseBody =  restClient.getRequest(url = "movie/${movieDetailsParam.movieId}/images")
+
+            return jsonParser.fromJson<MoviePicturesResponse>(res.string(), MoviePicturesResponse::class.java)
+
+        } catch (error: ServerException) {
+            throw ServerException(error.errorMessage)
+        }
+    }
+
+    override suspend fun getMovieCredits(movieDetailsParam: MovieDetailsParam): MovieCreditsResponse {
+        try {
+            val res: ResponseBody =  restClient.getRequest(url = "movie/${movieDetailsParam.movieId}/credits")
+
+            return jsonParser.fromJson<MovieCreditsResponse>(res.string(), MovieCreditsResponse::class.java)
+
+        } catch (error: ServerException) {
+            throw ServerException(error.errorMessage)
         }
     }
 

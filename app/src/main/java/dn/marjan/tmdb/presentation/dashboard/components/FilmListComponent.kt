@@ -26,13 +26,14 @@ import dn.marjan.tmdb.domain.entity.Movie
 
 
 @Composable
-fun FilmItem(title: String , coverPhoto: String , voteAverage: String ) {
+fun FilmItem(title: String , coverPhoto: String , voteAverage: String , onItemClick: ()->Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(8.dp)
             .width(200.dp)
             .height(300.dp)
+            .clickable { onItemClick() }
     ) {
         Surface(
             shadowElevation = 10.dp,

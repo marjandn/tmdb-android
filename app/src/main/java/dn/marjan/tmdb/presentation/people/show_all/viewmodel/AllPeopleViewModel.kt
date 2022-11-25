@@ -1,25 +1,16 @@
-package dn.marjan.tmdb.presentation.people.viewmodel
+package dn.marjan.tmdb.presentation.people.show_all.viewmodel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dn.marjan.tmdb.app.base.datastate.DataState
-import dn.marjan.tmdb.data.datasources.remote.parameters.PagingParam
-import dn.marjan.tmdb.domain.entity.Movie
 import dn.marjan.tmdb.domain.entity.People
 import dn.marjan.tmdb.domain.usecase.people.GetPopularPeople
-import dn.marjan.tmdb.presentation.people.components.AllPeopleState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 

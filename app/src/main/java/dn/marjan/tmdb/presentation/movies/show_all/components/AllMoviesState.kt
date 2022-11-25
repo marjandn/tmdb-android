@@ -1,6 +1,5 @@
-package dn.marjan.tmdb.presentation.movies.components
+package dn.marjan.tmdb.presentation.movies.show_all.components
 
-import androidx.annotation.StringRes
 import dn.marjan.tmdb.domain.entity.Movie
 
 

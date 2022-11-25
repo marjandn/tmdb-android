@@ -5,17 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dn.marjan.tmdb.app.base.datastate.DataState
-import dn.marjan.tmdb.data.datasources.remote.parameters.PagingParam
 import dn.marjan.tmdb.domain.entity.Movie
 import dn.marjan.tmdb.domain.entity.People
 import dn.marjan.tmdb.domain.entity.Tvshow
 import dn.marjan.tmdb.domain.usecase.movie.*
 import dn.marjan.tmdb.domain.usecase.people.GetFirstTenPopularPeople
-import dn.marjan.tmdb.domain.usecase.people.GetPopularPeople
-import dn.marjan.tmdb.domain.usecase.tvshow.GetFeaturedTvshows
 import dn.marjan.tmdb.domain.usecase.tvshow.GetFirstTenFeaturedTvshow
 import dn.marjan.tmdb.domain.usecase.tvshow.GetFirstTenPopularTvshow
-import dn.marjan.tmdb.domain.usecase.tvshow.GetPopularTvshows
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,7 +25,7 @@ class DashboardViewModel @Inject constructor(
     private val getPopularTvshows: GetFirstTenPopularTvshow,
     private val getFeaturedTvshows: GetFirstTenFeaturedTvshow,
     private val getPopularPeople: GetFirstTenPopularPeople,
-    private val dispatcher: CoroutineDispatcher
+    private val dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     var popularMovies = mutableStateListOf<Movie>()
@@ -58,6 +54,7 @@ class DashboardViewModel @Inject constructor(
         getPopularTvshows()
         getFeaturedTvshows()
         getPopularPeople()
+
     }
 
 

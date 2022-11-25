@@ -11,6 +11,8 @@ class Constant {
         // Intent params
         const val PAGE_TITLE_KEY = "page_title_key"
         const val PAGE_DATA_TYPE = "page_data_type"
+
+        const val CLICKED_ITEM_ID = "clicked_item_id"
     }
 }
 

@@ -18,15 +18,4 @@ class PagingModule {
     @Provides
     fun providePageConfig(): PagingConfig = PagingConfig(pageSize = 20)
 
-    @Singleton
-    @Provides
-    fun providePopularPagingSource(movieRemoteDataSource: MovieRemoteDataSource): PopularMoviePagingSource =
-        PopularMoviePagingSource(movieRemoteDataSource)
-
-    @Singleton
-    @Provides
-    fun popularFeaturedPagingSource(movieRemoteDataSource: MovieRemoteDataSource): FeaturedMoviePagingSource =
-        FeaturedMoviePagingSource(movieRemoteDataSource)
-
-
 }

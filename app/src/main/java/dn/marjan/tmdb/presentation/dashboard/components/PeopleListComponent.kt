@@ -1,6 +1,7 @@
 package dn.marjan.tmdb.presentation.dashboard.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -22,12 +23,13 @@ import dn.marjan.tmdb.domain.entity.People
 
 
 @Composable
-fun PeopleItem(person: People) {
+fun PeopleItem(person: People, onPersonClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(8.dp)
             .width(IntrinsicSize.Max)
+            .clickable { onPersonClick() }
     ) {
         Surface(
             shadowElevation = 10.dp,
@@ -36,7 +38,7 @@ fun PeopleItem(person: People) {
         ) {
             AsyncImage(
                 model = person.profilePath, contentDescription = null,
-                  contentScale = ContentScale.Crop  ,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(150.dp)
                     .width(150.dp)

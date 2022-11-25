@@ -8,7 +8,9 @@ data class People(
     val name: String,
     private val _profilePath: String?,
     val popularity: Double,
-    val knownFor: String
+    val knownFor: String,
+    val biography: String?,
+    val placeOfBirth: String? = null,
 ) {
     val profilePath = _profilePath
         get() = "${Constant.IMAGE_ADDRESS}$field"

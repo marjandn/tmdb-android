@@ -78,7 +78,7 @@ fun BodyContent(pageTitle: String, viewModel: AllTvshowsViewModel, onBackPressed
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            items(tvshowPager){item ->
+            items(tvshowPager) { item ->
                 item?.let {
                     LandFilmItemComponent(
                         photo = item.posterPath,

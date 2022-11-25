@@ -1,20 +1,23 @@
 package dn.marjan.tmdb.data.repositories
 
-import android.util.Log
 import androidx.paging.*
 import dn.marjan.tmdb.app.base.datastate.DataState
 import dn.marjan.tmdb.app.base.error.ServerException
+import dn.marjan.tmdb.data.datasources.remote.parameters.MovieDetailsParam
 import dn.marjan.tmdb.data.paging.movies.PopularMoviePagingSource
 import dn.marjan.tmdb.data.datasources.remote.parameters.PagingParam
-import dn.marjan.tmdb.data.datasources.remote.parameters.SearchParam
 import dn.marjan.tmdb.data.datasources.remote.services.MovieRemoteDataSource
+import dn.marjan.tmdb.data.model.MovieCreditsResponse
+import dn.marjan.tmdb.data.model.MovieDetailsResponse
+import dn.marjan.tmdb.data.model.MoviePicturesResponse
 import dn.marjan.tmdb.data.model.MovieResponse
 import dn.marjan.tmdb.data.paging.movies.FeaturedMoviePagingSource
 import dn.marjan.tmdb.data.paging.movies.SearchMoviePagingSource
 import dn.marjan.tmdb.domain.entity.Movie
+import dn.marjan.tmdb.domain.entity.MovieCredits
+import dn.marjan.tmdb.domain.entity.MovieDetails
+import dn.marjan.tmdb.domain.entity.MoviePictures
 import dn.marjan.tmdb.domain.repository.MovieRepository
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import javax.inject.Inject
@@ -65,11 +68,39 @@ class MovieRepositoryImpl @Inject constructor(
         featuredMoviePagingSource
     }.flow
 
-    override fun searchMovie(query: String): Flow<PagingData<Movie>> {
-        return Pager(pageConfig) {
-            SearchMoviePagingSource(movieRemoteDataSource, query)
-        }.flow.catch {
-            println("sth went wrong")
+    override fun searchMovie(query: String): Flow<PagingData<Movie>> = Pager(pageConfig) {
+        SearchMoviePagingSource(movieRemoteDataSource, query)
+    }.flow.catch {
+        println("sth went wrong")
+    }
+
+    override suspend fun getMoviePrimaryDetails(movieDetailsParam: MovieDetailsParam): DataState<MovieDetails> {
+        return try {
+            val response: MovieDetailsResponse = movieRemoteDataSource.getMovieDetails(movieDetailsParam)
+
+            DataState.DataSuccessState(response.toEntity())
+        } catch (error: ServerException) {
+            DataState.DataFailedState(error.errorMessage)
+        }
+    }
+
+    override suspend fun getMoviePictures(movieDetailsParam: MovieDetailsParam): DataState<List<MoviePictures>> {
+        return try {
+            val response: MoviePicturesResponse = movieRemoteDataSource.getMoviePictures(movieDetailsParam)
+
+            DataState.DataSuccessState(response.toEntity())
+        } catch (error: ServerException) {
+            DataState.DataFailedState(error.errorMessage)
+        }
+    }
+
+    override suspend fun getMovieCredits(movieDetailsParam: MovieDetailsParam): DataState<List<MovieCredits>> {
+        return try {
+            val response: MovieCreditsResponse = movieRemoteDataSource.getMovieCredits(movieDetailsParam)
+
+            DataState.DataSuccessState(response.toEntity())
+        } catch (error: ServerException) {
+            DataState.DataFailedState(error.errorMessage)
         }
     }
 }

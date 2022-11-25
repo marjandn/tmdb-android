@@ -5,8 +5,6 @@ import dn.marjan.tmdb.domain.entity.Genre
 
 class GenreResponse(
     val genres: List<Result>,
-
-
 ) {
     fun toEntity(): List<Genre> = genres.map {
         Genre(

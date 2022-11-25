@@ -3,47 +3,112 @@ package dn.marjan.tmdb.presentation.dashboard
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.lerp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.AsyncImage
+import com.google.accompanist.pager.*
 import dn.marjan.tmdb.app.constants.Constant
 import dn.marjan.tmdb.app.constants.MoviesType
 import dn.marjan.tmdb.app.constants.TvshowType
 import dn.marjan.tmdb.app.extensions.navigation
 import dn.marjan.tmdb.app.extensions.putEnumExtra
+import dn.marjan.tmdb.data.datasources.remote.parameters.PersonDetailsParam
 import dn.marjan.tmdb.domain.entity.Movie
 import dn.marjan.tmdb.domain.entity.People
 import dn.marjan.tmdb.domain.entity.Tvshow
 import dn.marjan.tmdb.presentation.dashboard.components.*
 import dn.marjan.tmdb.presentation.dashboard.viewmodel.DashboardViewModel
-import dn.marjan.tmdb.presentation.movies.AllMoviesPage
-import dn.marjan.tmdb.presentation.people.AllPeoplePage
+import dn.marjan.tmdb.presentation.movies.details.MovieDetailsPage
+import dn.marjan.tmdb.presentation.movies.show_all.AllMoviesPage
+import dn.marjan.tmdb.presentation.people.details.PersonDetailsPage
+import dn.marjan.tmdb.presentation.people.show_all.AllPeoplePage
 import dn.marjan.tmdb.presentation.shared_components.LoadingComponent
 import dn.marjan.tmdb.presentation.shared_components.SpacerComponent
 import dn.marjan.tmdb.presentation.tvshows.AllTvshowPage
+import kotlin.math.absoluteValue
 
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalLifecycleComposeApi::class, ExperimentalPagerApi::class)
 @Composable
 fun DashboardPage(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
+    val sliderPictures: List<Movie> = viewModel.upComingMovies
+    val pagerState = rememberPagerState(pageCount = sliderPictures.size)
+
     Column(
         modifier = Modifier.verticalScroll(state = rememberScrollState())
     ) {
-        PopularMoviesList(viewModel.popularMovies) {
+        AnimatedVisibility(visible = sliderPictures.isNotEmpty()) {
+            Box(modifier = Modifier.height(600.dp)) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxWidth()
+                ) { index ->
+
+                    AsyncImage(
+                        model = sliderPictures[index].posterPath,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(600.dp)
+                            .graphicsLayer {
+                                val pageOffset = calculateCurrentOffsetForPage(index).absoluteValue
+
+                                lerp(
+                                    start = 0.45f,
+                                    stop = 1f,
+                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                ).also { scale ->
+                                    scaleX = scale
+                                    scaleY = scale
+                                }
+
+                                alpha = lerp(
+                                    start = 0.5f,
+                                    stop = 1f,
+                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                )
+                            }
+                    )
+
+                }
+                HorizontalPagerIndicator(
+                    pagerState = pagerState,
+                    activeColor = MaterialTheme.colorScheme.primary,
+                    inactiveColor = Color.Gray,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 16.dp)
+                )
+            }
+
+        }
+        SpacerComponent(height = 32.dp)
+
+        PopularMoviesList(viewModel.popularMovies, showAllTapped = {
             context.startActivity(
                 context.navigation<AllMoviesPage>(
                     extras = mapOf<String, String>(
@@ -51,7 +116,11 @@ fun DashboardPage(
                     )
                 ).putEnumExtra<MoviesType>(enum = MoviesType.populraMovies)
             )
-        }
+        }, onMovieClick = { movieId ->
+            context.startActivity(
+                context.navigation<MovieDetailsPage>(extras = mapOf(Constant.CLICKED_ITEM_ID to movieId.toString()))
+            )
+        })
         SpacerComponent(height = 24.dp)
         FeaturedMoviesList(viewModel.featuredMovies) {
             context.startActivity(
@@ -73,7 +142,7 @@ fun DashboardPage(
             )
         }
         SpacerComponent(height = 24.dp)
-        PopularPeopleList(viewModel.popularPeople) {
+        PopularPeopleList(viewModel.popularPeople, showAllTapped = {
             context.startActivity(
                 context.navigation<AllPeoplePage>(
                     extras = mapOf<String, String>(
@@ -81,7 +150,15 @@ fun DashboardPage(
                     )
                 )
             )
-        }
+        }, onPersonClick = { personId ->
+            context.startActivity(
+                context.navigation<PersonDetailsPage>(
+                    extras = mapOf(
+                        Constant.CLICKED_ITEM_ID to personId.toString()
+                    )
+                )
+            )
+        })
         SpacerComponent(height = 24.dp)
         PopularTvshowList(viewModel.popoularTvshows) {
             context.startActivity(
@@ -103,13 +180,13 @@ fun DashboardPage(
             )
         }
     }
-
 }
 
 
-
 @Composable
-fun PopularMoviesList(list: List<Movie>, showAllTapped: () -> Unit) {
+fun PopularMoviesList(
+    list: List<Movie>, showAllTapped: () -> Unit, onMovieClick: (movieId: Int) -> Unit
+) {
 
     HomeListHeader("Today Popular Movies") {
         showAllTapped()
@@ -119,15 +196,16 @@ fun PopularMoviesList(list: List<Movie>, showAllTapped: () -> Unit) {
         LoadingComponent()
     } else {
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             items(items = list) { movie ->
                 FilmItem(
                     title = movie.title,
                     coverPhoto = movie.posterPath,
                     voteAverage = movie.voteAverage.toString()
-                )
+                ) {
+                    onMovieClick(movie.id)
+                }
             }
         }
     }
@@ -135,7 +213,9 @@ fun PopularMoviesList(list: List<Movie>, showAllTapped: () -> Unit) {
 
 
 @Composable
-fun PopularPeopleList(list: List<People>, showAllTapped: () -> Unit) {
+fun PopularPeopleList(
+    list: List<People>, showAllTapped: () -> Unit, onPersonClick: (personId: Int) -> Unit
+) {
     HomeListHeader("Today Popular People") {
         showAllTapped()
     }
@@ -144,11 +224,12 @@ fun PopularPeopleList(list: List<People>, showAllTapped: () -> Unit) {
         LoadingComponent()
     } else {
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             items(items = list) { item ->
-                PeopleItem(item)
+                PeopleItem(item) {
+                    onPersonClick(item.id)
+                }
             }
         }
     }
@@ -164,15 +245,14 @@ fun UpcomingMoviesList(list: List<Movie>, showAllTapped: () -> Unit) {
         LoadingComponent()
     } else {
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             items(items = list) { movie ->
                 FilmItem(
                     title = movie.title,
                     coverPhoto = movie.posterPath,
                     voteAverage = movie.voteAverage.toString()
-                )
+                ) {}
             }
         }
     }
@@ -187,15 +267,14 @@ fun FeaturedMoviesList(list: List<Movie>, showAllTapped: () -> Unit) {
         LoadingComponent()
     } else {
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             items(items = list) { movie ->
                 FilmItem(
                     title = movie.title,
                     coverPhoto = movie.posterPath,
                     voteAverage = movie.voteAverage.toString()
-                )
+                ) {}
             }
         }
     }
@@ -211,15 +290,14 @@ fun PopularTvshowList(list: List<Tvshow>, showAllTapped: () -> Unit) {
         LoadingComponent()
     } else {
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             items(items = list) { movie ->
                 FilmItem(
                     title = movie.name,
                     coverPhoto = movie.posterPath,
                     voteAverage = movie.voteAverage.toString()
-                )
+                ) {}
             }
         }
     }
@@ -234,15 +312,14 @@ fun FeaturedTvshowList(list: List<Tvshow>, showAllTapped: () -> Unit) {
         LoadingComponent()
     } else {
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             items(items = list) { movie ->
                 FilmItem(
                     title = movie.name,
                     coverPhoto = movie.posterPath,
                     voteAverage = movie.voteAverage.toString()
-                )
+                ) {}
             }
         }
     }

@@ -30,9 +30,11 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity android:name=".presentation.movies.AllMoviesPage"/>
+        <activity android:name=".presentation.movies.show_all.AllMoviesPage"/>
+        <activity android:name=".presentation.movies.details.MovieDetailsPage"/>
+        <activity android:name=".presentation.people.details.PersonDetailsPage"/>
         <activity android:name=".presentation.tvshows.AllTvshowPage"/>
-        <activity android:name=".presentation.people.AllPeoplePage"/>
+        <activity android:name=".presentation.people.show_all.AllPeoplePage"/>
     </application>
 
 </manifest>
